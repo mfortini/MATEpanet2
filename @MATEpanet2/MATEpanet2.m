@@ -69,20 +69,29 @@ ENinit ()
 ENopen (inputFileName, reportFileName, binaryFileName)
 ENclose()
 
+ENsolveH()
+ENopenH()
 ENinitH(saveflag)
 t = ENrunH()
 tStep = ENnextH()
-ENopenH()
 ENcloseH()
 
 nNodes = ENgetnodecount()
 nLinks = ENgetlinkcount()
 
 nodeId = ENgetnodeid (index)
-[nodeIds] = ENgetnodeids()
+function x = ENgetnodeids(); x = []; for i=1:MATEpanet2.ENgetnodecount(); x{i}=MATEpanet2.ENgetnodeid(i);end;end
 nodeIndex = ENgetnodeindex(id)
 nodeType  = ENgetnodetype(index)
+function x = ENgetnodetypes(); x = []; for i=1:MATEpanet2.ENgetnodecount(); x(i)=MATEpanet2.ENgetnodetype(i);end;end
 
+linkId = ENgetlinkid (index)
+function x = ENgetlinkids(); x = []; for i=1:MATEpanet2.ENgetlinkcount(); x{i}=MATEpanet2.ENgetlinkid(i);end;end
+linkIndex = ENgetlinkindex(id)
+linkType  = ENgetlinktype(index)
+function x = ENgetlinktypes(); x = []; for i=1:MATEpanet2.ENgetlinkcount(); x(i)=MATEpanet2.ENgetlinktype(i);end;end
+nodes = ENgetlinknodes(index)
+function x = ENgetlinksnodes(); n = MATEpanet2.ENgetlinkcount(); x = zeros(n,2); for i=1:n; x(i,:)=MATEpanet2.ENgetlinknodes(i);end;end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -90,8 +99,33 @@ end
 methods (Static,Access=private)
 count = ENgetcount(what)
 value = ENgetnodevalue (index,what)
+value = ENgetlinkvalue (index,what)
 end
 
+% LINK PROPERTIES ACCESSORS %
+methods(Static)
+function x = ENgetLinkDiameter    (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_DIAMETER   ); end
+function x = ENgetLinkLength      (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_LENGTH     ); end
+function x = ENgetLinkRoughness   (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_ROUGHNESS  ); end
+function x = ENgetLinkMinorLoss   (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_MINORLOSS  ); end
+function x = ENgetLinkInitStatus  (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_INITSTATUS ); end
+function x = ENgetLinkInitSetting (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_INITSETTING); end
+function x = ENgetLinkKBulk       (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_KBULK      ); end
+function x = ENgetLinkKWall       (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_KWALL      ); end
+function x = ENgetLinkFlow        (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_FLOW       ); end
+function x = ENgetLinkVelocity    (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_VELOCITY   ); end
+function x = ENgetLinkHeadLoss    (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_HEADLOSS   ); end
+function x = ENgetLinkStatus      (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_STATUS     ); end
+function x = ENgetLinkSetting     (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_SETTING    ); end
+function x = ENgetLinkEnergy      (idx); x = MATEpanet2.ENgetlinkvalue(idx, MATEpanet2.EN_ENERGY     ); end
+
+function x = ENgetLinkFlows     (); x = []; for i=1:MATEpanet2.ENgetlinkcount(); x(i)=MATEpanet2.ENgetLinkFlow    (i);end;end
+function x = ENgetLinkVelocities(); x = []; for i=1:MATEpanet2.ENgetlinkcount(); x(i)=MATEpanet2.ENgetLinkVelocity(i);end;end
+function x = ENgetLinkHeadLosses(); x = []; for i=1:MATEpanet2.ENgetlinkcount(); x(i)=MATEpanet2.ENgetLinkHeadLoss(i);end;end
+function x = ENgetLinkStatuses  (); x = []; for i=1:MATEpanet2.ENgetlinkcount(); x(i)=MATEpanet2.ENgetLinkStatus  (i);end;end
+function x = ENgetLinkSettings  (); x = []; for i=1:MATEpanet2.ENgetlinkcount(); x(i)=MATEpanet2.ENgetLinkSetting (i);end;end
+function x = ENgetLinkEnergies  (); x = []; for i=1:MATEpanet2.ENgetlinkcount(); x(i)=MATEpanet2.ENgetLinkEnergt  (i);end;end
+end
 
 % NODE PROPERTIES ACCESSORS %
 methods(Static)
@@ -119,6 +153,12 @@ function x = ENgetNodeMinLevel   (idx); x = MATEpanet2.ENgetnodevalue(idx, MATEp
 function x = ENgetNodeMaxLevel   (idx); x = MATEpanet2.ENgetnodevalue(idx, MATEpanet2.EN_MAXLEVEL   ); end
 function x = ENgetNodeMixFraction(idx); x = MATEpanet2.ENgetnodevalue(idx, MATEpanet2.EN_MIXFRACTION); end
 function x = ENgetNodeTankKBulk  (idx); x = MATEpanet2.ENgetnodevalue(idx, MATEpanet2.EN_TANK_KBULK ); end
+
+
+function x = ENgetNodeDemands  (); x = []; for i=1:MATEpanet2.ENgetnodecount(); x(i)=MATEpanet2.ENgetNodeDemand  (i);end;end
+function x = ENgetNodeHeads    (); x = []; for i=1:MATEpanet2.ENgetnodecount(); x(i)=MATEpanet2.ENgetNodeHead    (i);end;end
+function x = ENgetNodePressures(); x = []; for i=1:MATEpanet2.ENgetnodecount(); x(i)=MATEpanet2.ENgetNodePressure(i);end;end
+function x = ENgetNodeQualities(); x = []; for i=1:MATEpanet2.ENgetnodecount(); x(i)=MATEpanet2.ENgetNodeQuality (i);end;end
 
 end
 
